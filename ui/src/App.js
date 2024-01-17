@@ -18,10 +18,13 @@ export default function App() {
   const fetchTasks = async () => {
     try {
       const { data } = await axios.get(API_URL);
-
-      setTasks(data);
+      if (Array.isArray(data)) {
+        setTasks(data);
+      } else {
+        console.error("Data received is not an array", data);
+      }
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching tasks:", err);
     }
   };
 
@@ -33,7 +36,7 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <AddTaskForm fetchTasks={fetchTasks} />
-      {tasks.map((task) => (
+      {Array.isArray(tasks) && tasks.map((task) => (
         <Task task={task} key={task.id} fetchTasks={fetchTasks} />
       ))}
     </ThemeProvider>
